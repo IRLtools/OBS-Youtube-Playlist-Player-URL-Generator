@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS-Youtube-Playlist-Player URL Generator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>OBS-Youtube-Playlist-Player URL Generator</h2>
+    <div class="alert alert-info">
+        <h4>How to Use:</h4>
+        <ol>
+            <li>Go to a YouTube Playlist.</li>
+            <li>Click the video you'd like the playlist to restart/start on.</li>
+            <li>Copy the <code>youtube.com/watch?v=...</code> URL from your browser's address bar.</li>
+            <li>Paste the URL into the box below and adjust settings per your request.</li>
+            <li>Place the generated URL into OBS as a browser source, and you're done!</li>
+        </ol>
+    </div>
+    <div class="form-group">
+        <label for="youtubeUrl">YouTube Video/Playlist URL</label>
+        <input type="text" class="form-control" id="youtubeUrl" placeholder="Enter the part of the URL after 'youtube.com/'">
+    </div>
+    <div class="form-group">
+        <label for="volume">Volume (0-100)</label>
+        <input type="number" class="form-control" id="volume" placeholder="45" min="0" max="100">
+    </div>
+    <div class="form-row">
+        <div class="col">
+            <label for="width">Width</label>
+            <input type="number" class="form-control" id="width" placeholder="1920">
+        </div>
+        <div class="col">
+            <label for="height">Height</label>
+            <input type="number" class="form-control" id="height" placeholder="1080">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="quality">Quality</label>
+        <select class="form-control" id="quality">
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+            <option value="hd720">HD720</option>
+            <option value="hd1080">HD1080</option>
+            <option value="highres">Highres</option>
+            <option value="default" selected>Default</option>
+        </select>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="hide">
+        <label class="form-check-label" for="hide">Hide Video Player</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="hideWhenStopped">
+        <label class="form-check-label" for="hideWhenStopped">Hide When Video Stops</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="forcequality">
+        <label class="form-check-label" for="forcequality">Force Chosen Video Quality</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="loop" checked>
+        <label class="form-check-label" for="loop">Loop Video/Playlist</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="random" checked>
+        <label class="form-check-label" for="random">Randomize Next Song in Playlist</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="fade">
+        <label class="form-check-label" for="fade">Enable Volume Fade on Song Start/End</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="title">
+        <label class="form-check-label" for="title">Show Current Song Title and Author</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="controls">
+        <label class="form-check-label" for="controls">Toggle Video Controls</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="debug">
+        <label class="form-check-label" for="debug">Enable Debug Mode</label>
+    </div>
+    <button type="button" class="btn btn-primary mt-3" onclick="generateUrl()">Generate URL</button>
+    <div class="form-group mt-3">
+        <label for="generatedUrl">Generated URL</label>
+        <textarea class="form-control" id="generatedUrl" rows="4" readonly></textarea>
+    </div>
+    <button class="btn btn-success" onclick="copyToClipboard()">Copy URL</button>
+</div>
+
+<script>
+function generateUrl() {
+    const baseUrl = "https://hopollo.github.io/OBS-Youtube-Player/?";
+    let params = [];
+
+    // Basic URL part
+    const youtubeUrl = document.getElementById("youtubeUrl").value.trim();
+    if (youtubeUrl) {
+        params.push(youtubeUrl);
+    }
+
+    // Volume
+    const volume = document.getElementById("volume").value;
+    if (volume) {
+        params.push(`volume=${volume}`);
+    }
+
+    // Width and height
+    const width = document.getElementById("width").value;
+    const height = document.getElementById("height").value;
+    if (width) {
+        params.push(`w=${width}`);
+    }
+    if (height) {
+        params.push(`h=${height}`);
+    }
+
+    // Quality
+    const quality = document.getElementById("quality").value;
+    params.push(`quality=${quality}`);
+
+    // Checkboxes
+    document.getElementById("hide").checked && params.push("hide=true");
+    document.getElementById("hideWhenStopped").checked && params.push("hideWhenStopped=true");
+    document.getElementById("forcequality").checked && params.push("forcequality=true");
+    document.getElementById("loop").checked && params.push("loop=true");
+    document.getElementById("random").checked && params.push("random=true");
+    document.getElementById("fade").checked && params.push("fade=true");
+    document.getElementById("title").checked && params.push("title=true");
+    document.getElementById("controls").checked && params.push("controls=true");
+    document.getElementById("debug").checked && params.push("debug=true");
+
+    // Generate and display the URL
+    const generatedUrl = baseUrl + params.join("&");
+    document.getElementById("generatedUrl").value = generatedUrl;
+}
+
+function copyToClipboard() {
+    const generatedUrl = document.getElementById("generatedUrl");
+    generatedUrl.select();
+    document.execCommand("copy");
+    alert("URL copied to clipboard!");
+}
+</script>
+</body>
+</html>
